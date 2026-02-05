@@ -3,7 +3,17 @@ entries:
   dataset:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-02-05T10:22:22.898392193Z"
+    created: "2026-02-05T10:37:48.632574288Z"
+    description: A Helm chart for Kubernetes
+    digest: 44c367d7da4dd364cfacb5c8458d0edcea157f0c5bbfe15d03b54355ff6fdebb
+    name: dataset
+    type: application
+    urls:
+    - https://usernameisnull.github.io/dataset/dataset-0.1.9.tgz
+    version: 0.1.9
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-02-05T10:37:48.63205761Z"
     description: A Helm chart for Kubernetes
     digest: 8c793e233065cd842ea15330684400c1d06e1f43227405bf5cfa4a24912847d8
     name: dataset
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://usernameisnull.github.io/dataset/dataset-0.1.8.tgz
     version: 0.1.8
-generated: "2026-02-05T10:22:22.897707103Z"
+generated: "2026-02-05T10:37:48.63140563Z"
