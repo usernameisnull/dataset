@@ -84,10 +84,17 @@ jobs:
       HELM_CHART_NAME: dataset
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.branch || github.ref_name }}
+
+      - name: Checkout GH-Pages Branch (为了保留旧版本)
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: old-gh-pages
+        continue-on-error: true # 第一次运行时分支不存在，防止报错
 
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -101,33 +108,32 @@ jobs:
             VERSION=${GITHUB_REF#refs/tags/}
           fi
           echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "SEMVER=${VERSION#v}" >> $GITHUB_OUTPUT
 
-      - name: Tag helm chart image and copy crds
+      - name: Prepare Helm Chart
         run: |
-          cp -rf config/crd/bases/* $HELM_CHARTS_DIR/templates/
-          image_tag=${{ steps.get_version.outputs.VERSION }}
-          chart_version=${{ steps.get_version.outputs.VERSION }}
-          sed -i "s/latest/${image_tag}/g" $HELM_CHARTS_DIR/values.yaml
-          chart_smever=${chart_version#"v"}
-          sed -i "s/0.1.0/${chart_smever}/g" $HELM_CHARTS_DIR/Chart.yaml
+          # 1. 注入 CRD 和版本号
+          cp -rf config/crd/bases/* $HELM_CHARTS_DIR/templates/ || true
+          sed -i "s/tag: .*/tag: ${{ steps.get_version.outputs.VERSION }}/g" $HELM_CHARTS_DIR/values.yaml
+          sed -i "s/version: .*/version: ${{ steps.get_version.outputs.SEMVER }}/g" $HELM_CHARTS_DIR/Chart.yaml
+          
+          # 2. 准备发布目录
+          mkdir -p ./publish-dir
+          # 如果之前有旧文件，先复制过来（实现增量更新）
+          if [ -d "old-gh-pages" ]; then
+            cp -r old-gh-pages/* ./publish-dir/
+          fi
+          
+          # 3. 打包新版本
+          helm package $HELM_CHARTS_DIR --destination ./publish-dir/
+          
+          # 4. 重新生成索引
+          helm repo index ./publish-dir/ --url https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
 
-      - name: Configure git for GitHub Pages
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-
-      - name: Prepare Helm repository
-        run: |
-          # 创建一个临时目录来存放 Helm charts
-          mkdir -p ./charts-repo
-          # 打包 Helm Chart
-          helm package $HELM_CHARTS_DIR --destination ./charts-repo/
-          # 生成 Helm index 文件
-          helm repo index ./charts-repo/ --url https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
-
-      - name: Deploy Helm Charts to GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./charts-repo
+          publish_dir: ./publish-dir
           publish_branch: gh-pages
+          force_orphan: false # 保持历史记录
