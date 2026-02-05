@@ -113,15 +113,22 @@ jobs:
       - name: Prepare Helm Chart
         run: |
           # 1. 注入 CRD 和版本号
+          mkdir -p $HELM_CHARTS_DIR/templates/
           cp -rf config/crd/bases/* $HELM_CHARTS_DIR/templates/ || true
+          
+          # 更新 values 中的镜像 tag
           sed -i "s/tag: .*/tag: ${{ steps.get_version.outputs.VERSION }}/g" $HELM_CHARTS_DIR/values.yaml
+          # 更新 Chart.yaml 的版本号
           sed -i "s/version: .*/version: ${{ steps.get_version.outputs.SEMVER }}/g" $HELM_CHARTS_DIR/Chart.yaml
           
           # 2. 准备发布目录
           mkdir -p ./publish-dir
-          # 如果之前有旧文件，先复制过来（实现增量更新）
+          
+          # 【彻底修复点】：使用 find 确保只在有文件时才复制，且不依赖通配符 *
           if [ -d "old-gh-pages" ]; then
-            cp -r old-gh-pages/* ./publish-dir/
+            echo "Checking for existing files in gh-pages..."
+            # 查找 old-gh-pages 下的所有文件（排除 .git），并移动到 publish-dir
+            find old-gh-pages -maxdepth 1 -not -path 'old-gh-pages' -not -name '.git' -exec cp -rv {} ./publish-dir/ \;
           fi
           
           # 3. 打包新版本
