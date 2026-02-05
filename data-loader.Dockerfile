@@ -39,7 +39,7 @@ RUN pip install --no-cache-dir "huggingface_hub[cli]"==0.33.1 modelscope==1.27.1
     arch=$(uname -m | sed -E 's/x86_64/amd64/g;s/aarch64/arm64/g') && \
     filename=rclone-${rclone_version}-linux-${arch} && \
     wget https://github.com/rclone/rclone/releases/download/${rclone_version}/${filename}.zip -O ${filename}.zip && \
-    unzip ${filename}.zip && mv ${filename}/rclone /usr/local/bin && rm -rf ${filename} ${filename}.zip
+    unzip ${filename}.zip && mv ${filename}/rclone /usr/local/bin && rm -rf ${filename} ${filename}.zip && \
     jre_arch=$(uname -m | sed -E 's/x86_64/x64/g;s/aarch64/aarch64/g') && \
     wget https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.30%2B7/OpenJDK11U-jre_${jre_arch}_linux_hotspot_11.0.30_7.tar.gz -O jre.tar.gz && \
     tar -zxf jre.tar.gz -C /opt && \
