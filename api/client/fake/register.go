@@ -18,7 +18,7 @@ limitations under the License.
 package fake
 
 import (
-	datasetv1alpha1 "github.com/BaizeAI/dataset/api/dataset/v1alpha1"
+	datasetv1alpha1 "github.com/usernameisnull/dataset/api/dataset/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

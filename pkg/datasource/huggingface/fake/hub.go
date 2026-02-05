@@ -4,8 +4,8 @@ package fake
 import (
 	"context"
 	"sync"
-	
-	"github.com/BaizeAI/dataset/pkg/datasource/huggingface"
+
+	"github.com/usernameisnull/dataset/pkg/datasource/huggingface"
 )
 
 type FakeHfAPI struct {

@@ -20,8 +20,8 @@ package v1alpha1
 import (
 	http "net/http"
 
-	scheme "github.com/BaizeAI/dataset/api/client/scheme"
-	datasetv1alpha1 "github.com/BaizeAI/dataset/api/dataset/v1alpha1"
+	scheme "github.com/usernameisnull/dataset/api/client/scheme"
+	datasetv1alpha1 "github.com/usernameisnull/dataset/api/dataset/v1alpha1"
 	rest "k8s.io/client-go/rest"
 )
 

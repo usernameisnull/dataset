@@ -18,7 +18,7 @@ limitations under the License.
 package v1alpha1
 
 import (
-	internalinterfaces "github.com/BaizeAI/dataset/api/client/informers/internalinterfaces"
+	internalinterfaces "github.com/usernameisnull/dataset/api/client/informers/internalinterfaces"
 )
 
 // Interface provides access to all the informers in this group version.

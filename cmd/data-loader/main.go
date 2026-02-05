@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/BaizeAI/dataset/internal/cmd/dataloader"
-	"github.com/BaizeAI/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/internal/cmd/dataloader"
+	"github.com/usernameisnull/dataset/pkg/log"
 )
 
 func main() {

@@ -11,10 +11,10 @@ import (
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 
-	"github.com/BaizeAI/dataset/internal/pkg/constants"
-	"github.com/BaizeAI/dataset/internal/pkg/datasources"
-	"github.com/BaizeAI/dataset/pkg/log"
-	"github.com/BaizeAI/dataset/pkg/utils"
+	"github.com/usernameisnull/dataset/internal/pkg/constants"
+	"github.com/usernameisnull/dataset/internal/pkg/datasources"
+	"github.com/usernameisnull/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/pkg/utils"
 )
 
 func NewCommand() *cobra.Command {

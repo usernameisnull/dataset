@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 
-	"github.com/BaizeAI/dataset/internal/pkg/constants"
-	"github.com/BaizeAI/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/internal/pkg/constants"
+	"github.com/usernameisnull/dataset/pkg/log"
 )
 
 func TestCondaSync(t *testing.T) {

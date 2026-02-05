@@ -1,4 +1,4 @@
-module github.com/BaizeAI/dataset
+module github.com/usernameisnull/dataset
 
 go 1.25.1
 

@@ -3,8 +3,8 @@ package datasources
 import (
 	"os/exec"
 
-	"github.com/BaizeAI/dataset/pkg/log"
-	"github.com/BaizeAI/dataset/pkg/utils"
+	"github.com/usernameisnull/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/pkg/utils"
 )
 
 func rcloneCliConfigTouch() error {
