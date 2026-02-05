@@ -100,8 +100,8 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Sync Chart Repo
         run: |
-          git config --global user.email "baize.ai[bot]@users.noreply.github.com"
-          git config --global user.name "baize.ai[bot]"
+          git config --global user.email "bing.ma[bot]@users.noreply.github.com"
+          git config --global user.name "bing.ma[bot]"
           git clone https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/BaizeAI/charts.git baize-charts
           helm package $HELM_CHARTS_DIR --destination ./baize-charts/docs/
           helm repo index --url https://baizeai.github.io/charts ./baize-charts/docs/
