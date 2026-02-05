@@ -18,8 +18,8 @@ limitations under the License.
 package dataset
 
 import (
-	v1alpha1 "github.com/BaizeAI/dataset/api/client/informers/dataset/v1alpha1"
-	internalinterfaces "github.com/BaizeAI/dataset/api/client/informers/internalinterfaces"
+	v1alpha1 "github.com/usernameisnull/dataset/api/client/informers/dataset/v1alpha1"
+	internalinterfaces "github.com/usernameisnull/dataset/api/client/informers/internalinterfaces"
 )
 
 // Interface provides access to each of this group's versions.

@@ -12,8 +12,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/BaizeAI/dataset/pkg/log"
-	"github.com/BaizeAI/dataset/pkg/utils"
+	"github.com/usernameisnull/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/pkg/utils"
 )
 
 var _ Loader = &S3Loader{}

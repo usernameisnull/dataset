@@ -18,8 +18,8 @@ package main
 
 import (
 	"flag"
-	config2 "github.com/BaizeAI/dataset/config"
 	"github.com/samber/lo"
+	config2 "github.com/usernameisnull/dataset/config"
 	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -34,9 +34,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
-	datasetv1alpha1 "github.com/BaizeAI/dataset/api/dataset/v1alpha1"
+	datasetv1alpha1 "github.com/usernameisnull/dataset/api/dataset/v1alpha1"
 
-	datasetcontroller "github.com/BaizeAI/dataset/internal/controller/dataset"
+	datasetcontroller "github.com/usernameisnull/dataset/internal/controller/dataset"
 	//+kubebuilder:scaffold:imports
 )
 

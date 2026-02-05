@@ -188,8 +188,8 @@ gen-client:
 		--clientset-name=client \
 		--go-header-file=hack/boilerplate.go.txt \
 		--output-dir ./api \
-		--output-pkg github.com/BaizeAI/dataset/api \
-		--input-base github.com/BaizeAI/dataset/api
+		--output-pkg github.com/usernameisnull/dataset/api \
+		--input-base github.com/usernameisnull/dataset/api
 
 .PHONY: gen-lister
 gen-lister: gen-client
@@ -197,8 +197,8 @@ gen-lister: gen-client
 	go run $(CODE_GENERATOR_PATH)/cmd/lister-gen \
 		--go-header-file=hack/boilerplate.go.txt \
 		--output-dir ./api/client/listers \
-		--output-pkg github.com/BaizeAI/dataset/api/client/listers \
-		github.com/BaizeAI/dataset/api/dataset/v1alpha1
+		--output-pkg github.com/usernameisnull/dataset/api/client/listers \
+		github.com/usernameisnull/dataset/api/dataset/v1alpha1
 
 .PHONY: gen-informer
 gen-informer: gen-lister
@@ -206,11 +206,11 @@ gen-informer: gen-lister
 	go run $(CODE_GENERATOR_PATH)/cmd/informer-gen \
 		--go-header-file=hack/boilerplate.go.txt \
 		--output-dir ./api/client/informers \
-		--output-pkg github.com/BaizeAI/dataset/api/client/informers \
-		--versioned-clientset-package github.com/BaizeAI/dataset/api/client \
-		--listers-package github.com/BaizeAI/dataset/api/client/listers \
+		--output-pkg github.com/usernameisnull/dataset/api/client/informers \
+		--versioned-clientset-package github.com/usernameisnull/dataset/api/client \
+		--listers-package github.com/usernameisnull/dataset/api/client/listers \
 		--single-directory \
-		github.com/BaizeAI/dataset/api/dataset/v1alpha1
+		github.com/usernameisnull/dataset/api/dataset/v1alpha1
 
 .PHONY: gen-all-client
 gen-all-client: gen-informer

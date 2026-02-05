@@ -4,8 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/BaizeAI/dataset/pkg/log"
-	"github.com/BaizeAI/dataset/pkg/utils"
+	"github.com/usernameisnull/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/pkg/utils"
 )
 
 type Secrets struct {

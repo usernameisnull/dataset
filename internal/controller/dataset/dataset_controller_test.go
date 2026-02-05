@@ -31,9 +31,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 
-	datasetv1alpha1 "github.com/BaizeAI/dataset/api/dataset/v1alpha1"
-	"github.com/BaizeAI/dataset/config"
-	"github.com/BaizeAI/dataset/internal/pkg/constants"
+	datasetv1alpha1 "github.com/usernameisnull/dataset/api/dataset/v1alpha1"
+	"github.com/usernameisnull/dataset/config"
+	"github.com/usernameisnull/dataset/internal/pkg/constants"
 )
 
 func TestDatasetReconciler_findReferencingDatasets(t *testing.T) {

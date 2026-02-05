@@ -18,8 +18,8 @@ limitations under the License.
 package fake
 
 import (
-	datasetv1alpha1 "github.com/BaizeAI/dataset/api/client/typed/dataset/v1alpha1"
-	v1alpha1 "github.com/BaizeAI/dataset/api/dataset/v1alpha1"
+	datasetv1alpha1 "github.com/usernameisnull/dataset/api/client/typed/dataset/v1alpha1"
+	v1alpha1 "github.com/usernameisnull/dataset/api/dataset/v1alpha1"
 	gentype "k8s.io/client-go/gentype"
 )
 

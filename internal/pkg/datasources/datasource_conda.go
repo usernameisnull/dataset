@@ -13,11 +13,11 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 
-	"github.com/BaizeAI/dataset/internal/pkg/constants"
-	"github.com/BaizeAI/dataset/internal/pkg/datasources/conda"
-	"github.com/BaizeAI/dataset/internal/pkg/datasources/pip"
-	"github.com/BaizeAI/dataset/pkg/log"
-	"github.com/BaizeAI/dataset/pkg/utils"
+	"github.com/usernameisnull/dataset/internal/pkg/constants"
+	"github.com/usernameisnull/dataset/internal/pkg/datasources/conda"
+	"github.com/usernameisnull/dataset/internal/pkg/datasources/pip"
+	"github.com/usernameisnull/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/pkg/utils"
 )
 
 type CondaLoaderOptions struct {

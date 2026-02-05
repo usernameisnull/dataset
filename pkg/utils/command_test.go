@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/BaizeAI/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/pkg/log"
 )
 
 func TestExecuteCommandWithAllOutput(t *testing.T) {

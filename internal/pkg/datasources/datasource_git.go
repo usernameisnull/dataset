@@ -18,8 +18,8 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/BaizeAI/dataset/pkg/log"
-	"github.com/BaizeAI/dataset/pkg/utils"
+	"github.com/usernameisnull/dataset/pkg/log"
+	"github.com/usernameisnull/dataset/pkg/utils"
 )
 
 var _ Loader = &GitLoader{}
