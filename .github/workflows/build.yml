@@ -29,7 +29,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ github.repository_owner }}/dataset-controller
+            ghcr.io/${{ github.repository }}/dataset-controller
           tags: |
             ${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}
 
@@ -48,7 +48,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ github.repository_owner }}/dataset-data-loader
+            ghcr.io/${{ github.repository }}/dataset-data-loader
           tags: |
             ${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}
 
@@ -93,21 +93,23 @@ jobs:
           chart_smever=${chart_version#"v"}
           sed -i "s/0.1.0/${chart_smever}/g" $HELM_CHARTS_DIR/Chart.yaml
 
-      - uses: getsentry/action-github-app-token@v3
-        id: get_app_token
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: Sync Chart Repo
+      - name: Configure git for GitHub Pages
         run: |
-          git config --global user.email "bing.ma[bot]@users.noreply.github.com"
-          git config --global user.name "bing.ma[bot]"
-          git clone https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/BaizeAI/charts.git baize-charts
-          helm package $HELM_CHARTS_DIR --destination ./baize-charts/docs/
-          helm repo index --url https://baizeai.github.io/charts ./baize-charts/docs/
-          cd baize-charts/
-          git add docs/
-          chart_version=${{ steps.get_version.outputs.VERSION }}
-          chart_smever=${chart_version#"v"}
-          git commit -m "update dataset chart ${chart_smever}"
-          git push https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/BaizeAI/charts.git
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Prepare Helm repository
+        run: |
+          # 创建一个临时目录来存放 Helm charts
+          mkdir -p ./charts-repo
+          # 打包 Helm Chart
+          helm package $HELM_CHARTS_DIR --destination ./charts-repo/
+          # 生成 Helm index 文件
+          helm repo index ./charts-repo/ --url https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+
+      - name: Deploy Helm Charts to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./charts-repo
+          publish_branch: gh-pages
