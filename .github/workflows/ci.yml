@@ -1,61 +1,165 @@
-name: CI
+name: Release
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - 'main'
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build from'
+        required: true
+        default: 'main'
+      version:
+        description: 'Version to release (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+      image:
+        description: Image to build
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - controller
+          - data-loader
+      platforms:
+        description: Target platform(s), comma-separated
+        required: true
+        default: linux/amd64
+        type: string
 
 jobs:
-  build-test:
-    name: Build Test
-    runs-on: "ubuntu-latest"
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/dataset-controller
+          tags: |
+            ${{ github.event.inputs.version || (github.ref == 'refs/heads/main' && 'latest' || github.ref_name) }}
+
+      - name: Build Manager
+        if: github.event_name != 'workflow_dispatch' || inputs.image == 'all' || inputs.image == 'controller'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ github.event_name == 'workflow_dispatch' && inputs.platforms || 'linux/amd64,linux/arm64' }}
+          push: true
+          provenance: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Docker meta
+        id: meta_loader
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/dataset-data-loader
+          tags: |
+            ${{ github.event.inputs.version || (github.ref == 'refs/heads/main' && 'latest' || github.ref_name) }}
+
+      - name: Build Data Loader
+        if: github.event_name != 'workflow_dispatch' || inputs.image == 'all' || inputs.image == 'data-loader'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: ${{ github.event_name == 'workflow_dispatch' && inputs.platforms || 'linux/amd64,linux/arm64' }}
+          push: true
+          file: data-loader.Dockerfile
+          provenance: false
+          tags: ${{ steps.meta_loader.outputs.tags }}
+          labels: ${{ steps.meta_loader.outputs.labels }}
+  publish-chart:
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.image == 'all')
+    needs: [ build-and-push ]
+    permissions:
+      contents: write
+    env:
+      HELM_CHARTS_DIR: manifests/dataset
+      HELM_CHART_NAME: dataset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Get the version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION=${{ github.event.inputs.version }}
+          else
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Tag helm chart image and copy crds
+        run: |
+          cp -rf config/crd/bases/* $HELM_CHARTS_DIR/templates/
+          image_tag=${{ steps.get_version.outputs.VERSION }}
+          chart_version=${{ steps.get_version.outputs.VERSION }}
+          sed -i "s/latest/${image_tag}/g" $HELM_CHARTS_DIR/values.yaml
+          chart_smever=${chart_version#"v"}
+          sed -i "s/0.1.0/${chart_smever}/g" $HELM_CHARTS_DIR/Chart.yaml
+
+      - uses: getsentry/action-github-app-token@v3
+        id: get_app_token
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      - name: Sync Chart Repo
+        run: |
+          git config --global user.email "bing.ma[bot]@users.noreply.github.com"
+          git config --global user.name "bing.ma[bot]"
+          git clone https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/BaizeAI/charts.git baize-charts
+          helm package $HELM_CHARTS_DIR --destination ./baize-charts/docs/
+          helm repo index --url https://baizeai.github.io/charts ./baize-charts/docs/
+          cd baize-charts/
+          git add docs/
+          chart_version=${{ steps.get_version.outputs.VERSION }}
+          chart_smever=${chart_version#"v"}
+          git commit -m "update dataset chart ${chart_smever}"
+          git push https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/BaizeAI/charts.git
+
+  sync-images:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [ build-and-push ]
+    permissions:
+      contents: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - uses: actions/setup-go@v6
-        with:
-          go-version: "stable"
-          cache: true
+      - name: Install Helm
+        uses: azure/setup-helm@v4
 
-      - name: Test Build
-        run: go build ./...
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-go@v6
-        with:
-          go-version: "stable"
-          cache: true
-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v9
-        with:
-          # Optional: golangci-lint command line arguments.
-          args: "--timeout=10m"
-
-  unittest:
-    name: Unit Test
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: "stable"
-          cache: true
-
-      - name: Unit tests
-        run: |
-          go test ./... -coverprofile=coverage.out -covermode=atomic -p=1
-          go tool cover -func coverage.out
+      - name: Sync images
+        run: ./hack/sync-images.sh
