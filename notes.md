@@ -1,3 +1,11 @@
+## 在环境上修改镜像
+打镜像: 合并代码到notes分支, 然后在github上执行Action  
+在环境上更改dataset-system里的cm dataset:
+```yaml
+image: 10.6.178.191:5000/dataset-data-loader:v1.0.101
+```
+然后重启pod
+
 ## 重复拉取某个仓库代码出现的问题
 新建了一个分支名字叫v0.6从main分支而来, 并push到了gitlab的v0.6
 ```bash
@@ -18,7 +26,7 @@ root in 󱃾 gpu-cluster(dataset-system) /tmp/Megatron-LM on  main via 🐍
 Switched to a new branch 'v0.6'
 
 root in 󱃾 gpu-cluster(dataset-system) /tmp/Megatron-LM on  v0.6 via 🐍
-➜ git push gitlab v0.6:v0.6 --force-with-lease
+➜ git push gitlab v0.6:v0.6 -f
 Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
 remote:
 remote: To create a merge request for v0.6, visit:
