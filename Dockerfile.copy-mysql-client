@@ -1,0 +1,4 @@
+FROM m.daocloud.io/docker.io/mysql:8.4 AS mysqlcli
+
+FROM m.daocloud.io/docker.io/python:3.13
+COPY --from=mysqlcli /usr/bin/mysql /usr/bin/mysql
